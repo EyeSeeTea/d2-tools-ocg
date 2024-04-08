@@ -227,8 +227,9 @@ This is an example of `settings.json`
 ```json
 {
     "dataElement": {
+        // represent the dataElement: HCV - Baseline consultation - if yes previous, HCV treatment received
         "id": "YTbq1BxBKV2",
-        // dataElement will not be removed from program stage
+        // to remove or not the dataElement from the programStage
         "remove": false,
         "dataElementsToUpdate": [
             // dataElement XT3pSrB4gga will be updated if the condition is equal to the value of the dataElement YTbq1BxBKV2
