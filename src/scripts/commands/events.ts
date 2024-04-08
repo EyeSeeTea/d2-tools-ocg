@@ -7,6 +7,10 @@ import { MoveEventsToOrgUnitUseCase } from "domain/usecases/MoveEventsToOrgUnitU
 import logger from "utils/log";
 import { UpdateEventDataValueUseCase } from "domain/usecases/UpdateEventDataValueUseCase";
 import { EventExportSpreadsheetRepository } from "data/EventExportSpreadsheetRepository";
+import { UpdateHcvDataValuesUseCase } from "domain/usecases/UpdateHcvDataValuesUseCase";
+import { HcvSettingsJsonRepository } from "data/HcvSettingsJsonRepository";
+import { ProgramStageD2Repository } from "data/ProgramStageD2Repository";
+import { HcvExportSpreadSheetRepository } from "data/HcvExportSpreadSheetRepository";
 
 export function getCommand() {
     return subcommands({
@@ -14,6 +18,7 @@ export function getCommand() {
         cmds: {
             "move-to-org-unit": moveOrgUnitCmd,
             "update-events": updateEventsDataValues,
+            "update-hcv-events": updateHcvEvents,
         },
     });
 }
@@ -112,5 +117,66 @@ const updateEventsDataValues = command({
         if (!args.csvPath) {
             logger.info(`Add --csv-path to generate a csv report`);
         }
+    },
+});
+
+const updateHcvEvents = command({
+    name: "Update HCV events",
+    description: "Update events in Hcv program",
+    args: {
+        url: getApiUrlOption(),
+        programId: option({
+            type: string,
+            long: "program-id",
+            description: "program id",
+        }),
+        programStageId: option({
+            type: string,
+            long: "program-stage-id",
+            description: "program stage id",
+        }),
+        rootOrgUnit: option({
+            type: string,
+            long: "root-org-unit",
+            description: "root organisation unit id",
+        }),
+        settingsPath: option({
+            type: string,
+            long: "settings-path",
+            description: "path to settings configuration file",
+        }),
+        post: flag({
+            long: "post",
+            description: "Save changes",
+            defaultValue: () => false,
+        }),
+        csvPath: option({
+            type: string,
+            long: "csv-path",
+            description: "path to csv report",
+        }),
+    },
+    handler: async args => {
+        const api = getD2Api(args.url);
+        const programEventsRepository = new ProgramEventsD2Repository(api);
+        const programStageRepository = new ProgramStageD2Repository(api);
+        const settingsRepository = new HcvSettingsJsonRepository();
+        const exportRepository = new HcvExportSpreadSheetRepository();
+        const result = await new UpdateHcvDataValuesUseCase(
+            programEventsRepository,
+            settingsRepository,
+            programStageRepository,
+            exportRepository
+        ).execute(args);
+
+        logger.info(`Result: ${JSON.stringify(result, null, 2)}`);
+
+        if (!args.post) {
+            logger.info(`Add --post to save changes`);
+        }
+
+        // if (!args.csvPath) {
+        //     logger.info(`Add --csv-path to generate a csv report`);
+        // }
     },
 });
