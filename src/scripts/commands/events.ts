@@ -8,9 +8,10 @@ import logger from "utils/log";
 import { UpdateEventDataValueUseCase } from "domain/usecases/UpdateEventDataValueUseCase";
 import { EventExportSpreadsheetRepository } from "data/EventExportSpreadsheetRepository";
 import { UpdateHcvDataValuesUseCase } from "domain/usecases/UpdateHcvDataValuesUseCase";
-import { HcvSettingsJsonRepository } from "data/HcvSettingsJsonRepository";
 import { ProgramStageD2Repository } from "data/ProgramStageD2Repository";
-import { HcvExportSpreadSheetRepository } from "data/HcvExportSpreadSheetRepository";
+import { HcvReportSpreadSheetRepository } from "data/HcvReportSpreadSheetRepository";
+import { readFile } from "jsonfile";
+import { buildSettings, HcvSettings } from "domain/entities/HcvSettings";
 
 export function getCommand() {
     return subcommands({
@@ -160,23 +161,18 @@ const updateHcvEvents = command({
         const api = getD2Api(args.url);
         const programEventsRepository = new ProgramEventsD2Repository(api);
         const programStageRepository = new ProgramStageD2Repository(api);
-        const settingsRepository = new HcvSettingsJsonRepository();
-        const exportRepository = new HcvExportSpreadSheetRepository();
+        const exportRepository = new HcvReportSpreadSheetRepository(args.csvPath);
+        const settings = await buildSettings(args.settingsPath);
         const result = await new UpdateHcvDataValuesUseCase(
             programEventsRepository,
-            settingsRepository,
             programStageRepository,
             exportRepository
-        ).execute(args);
+        ).execute({ ...args, settings: settings });
 
         logger.info(`Result: ${JSON.stringify(result, null, 2)}`);
 
         if (!args.post) {
             logger.info(`Add --post to save changes`);
         }
-
-        // if (!args.csvPath) {
-        //     logger.info(`Add --csv-path to generate a csv report`);
-        // }
     },
 });

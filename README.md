@@ -217,7 +217,7 @@ yarn start events update-hcv-events \
 --root-org-unit='EC7Ocg7n2Gy' \
 --program-id='QlYQtVqHbo5' \
 --program-stage-id='ITIkKdDGMNZ' \
---settings-path='./settings.json'
+--settings-path='./settings.json' \
 --csv-path=./report.csv \
 --post
 ```
