@@ -209,6 +209,55 @@ yarn start events update-events \
 --post
 ```
 
+### Update HFC events
+
+```
+yarn start events update-hcv-events \
+--url='http://USER:PASSWORD@HOST:PORT' \
+--root-org-unit='EC7Ocg7n2Gy' \
+--program-id='QlYQtVqHbo5' \
+--program-stage-id='ITIkKdDGMNZ' \
+--settings-path='./settings.json' \
+--csv-path=./report.csv \
+--post
+```
+
+This is an example of `settings.json`
+
+```json
+{
+    "dataElement": {
+        // represent the dataElement: HCV - Baseline consultation - if yes previous, HCV treatment received
+        "id": "YTbq1BxBKV2",
+        // to remove or not the dataElement from the programStage
+        "remove": false,
+        "dataElementsToUpdate": [
+            // dataElement XT3pSrB4gga will be updated if the condition is equal to the value of the dataElement YTbq1BxBKV2
+            {
+                "id": "XT3pSrB4gga",
+                "condition": "sof",
+                "value": "true"
+            },
+            {
+                "id": "vNsr8MO9NAf",
+                "condition": "dac",
+                "value": "true"
+            },
+            {
+                "id": "fDvzbjmQJxJ",
+                "condition": "vel",
+                "value": "true"
+            },
+            {
+                "id": "R4vITYGMc0b",
+                "condition": "other",
+                "value": "true"
+            }
+        ]
+    }
+}
+```
+
 ## Data values
 
 ### Dangling data values
