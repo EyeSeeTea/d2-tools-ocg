@@ -10,8 +10,7 @@ import { EventExportSpreadsheetRepository } from "data/EventExportSpreadsheetRep
 import { UpdateHcvDataValuesUseCase } from "domain/usecases/UpdateHcvDataValuesUseCase";
 import { ProgramStageD2Repository } from "data/ProgramStageD2Repository";
 import { HcvReportSpreadSheetRepository } from "data/HcvReportSpreadSheetRepository";
-import { readFile } from "jsonfile";
-import { buildSettings, HcvSettings } from "domain/entities/HcvSettings";
+import { buildSettings } from "utils/scripts";
 
 export function getCommand() {
     return subcommands({
